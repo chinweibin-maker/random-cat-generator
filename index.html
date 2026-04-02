@@ -6,17 +6,17 @@
     <title>喵星人全能盒子 Pro</title>
     <style>
         :root {
-            --cat-main: #ff9f43;
-            --cat-alt: #ff4757;
-            --bg: #fdf6e3;
+            --cat-primary: #ff9f43;
+            --cat-secondary: #ff4757;
+            --bg-color: #f8f9fa;
         }
-        body { font-family: sans-serif; background: var(--bg); text-align: center; padding: 20px; margin: 0; }
-        .container { background: white; max-width: 450px; margin: auto; padding: 25px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center; width: 100%; max-width: 450px; }
         
-        h1 { color: var(--cat-main); margin: 0; }
-        .tagline { font-size: 0.8rem; color: #888; margin-bottom: 20px; }
+        h1 { color: var(--cat-primary); margin: 0 0 10px 0; }
+        .tagline { font-size: 0.9rem; color: #888; margin-bottom: 20px; }
 
-        /* 图片框 */
+        /* 图片显示区 */
         .cat-display { 
             width: 100%; 
             aspect-ratio: 1/1; 
@@ -26,54 +26,145 @@
             align-items: center; 
             justify-content: center; 
             overflow: hidden;
-            border: 3px solid var(--cat-main);
+            border: 3px solid var(--cat-primary);
+            position: relative;
         }
-        #catImg { width: 100%; height: 100%; object-fit: cover; display: none; }
+        #catImg { width: 100%; height: 100%; object-fit: cover; display: none; transition: filter 0.3s; }
 
-        /* 滤镜按钮 */
-        .filters { display: flex; justify-content: center; gap: 5px; margin: 15px 0; flex-wrap: wrap; }
-        .f-btn { font-size: 12px; padding: 5px 10px; border-radius: 20px; border: 1px solid #ddd; background: #fff; cursor: pointer; }
-        .f-btn.active { background: var(--cat-main); color: white; border-color: var(--cat-main); }
+        /* 滤镜选择 */
+        .filter-section { margin: 15px 0; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+        .filter-btn { padding: 6px 12px; font-size: 12px; border-radius: 20px; border: 1px solid #ddd; background: white; cursor: pointer; }
+        .filter-btn.active { background: var(--cat-primary); color: white; border-color: var(--cat-primary); }
 
         /* 功能按钮 */
-        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-        .btn { padding: 15px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn-main { background: var(--cat-main); color: white; grid-column: span 2; font-size: 1.2rem; }
-        .btn-sub { background: #f1f2f6; color: #333; font-size: 0.9rem; }
-        .btn:active { transform: scale(0.95); }
-
-        .footer { margin-top: 20px; font-size: 0.7rem; color: #ccc; }
+        .main-btn { background: var(--cat-primary); color: white; border: none; padding: 16px; font-size: 1.1rem; border-radius: 15px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 15px; transition: 0.3s; }
+        .main-btn:hover { background: var(--cat-secondary); }
+        
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-sub { padding: 12px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; background: #333; color: white; font-size: 0.9rem; }
+        
+        #loading { font-weight: bold; color: #999; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>🐱 喵星人 Pro</h1>
-    <p class="tagline">全自动随机猫咪 & 真实互动</p>
+    <p class="tagline">你的专属随机猫咪助手</p>
 
     <div class="cat-display">
-        <div id="loading">喵星人传送中...</div>
-        <img id="catImg" src="" alt="猫咪">
+        <div id="loading">等待召唤中...</div>
+        <img id="catImg" src="" alt="随机猫咪">
     </div>
 
-    <div class="filters">
-        <button class="f-btn active" onclick="applyF('none', this)">原图</button>
-        <button class="f-btn" onclick="applyF('grayscale(1)', this)">黑白</button>
-        <button class="f-btn" onclick="applyF('sepia(0.8)', this)">怀旧</button>
-        <button class="f-btn" onclick="applyF('invert(1)', this)">反色</button>
+    <div class="filter-section">
+        <button class="filter-btn active" onclick="applyF('none', this)">原图</button>
+        <button class="filter-btn" onclick="applyF('grayscale(1)', this)">黑白</button>
+        <button class="filter-btn" onclick="applyF('sepia(0.8)', this)">怀旧</button>
+        <button class="filter-btn" onclick="applyF('invert(1)', this)">反色</button>
+        <button class="filter-btn" onclick="applyF('blur(3px)', this)">模糊</button>
     </div>
 
-    <div class="controls">
-        <button class="btn btn-main" onclick="getCat()">⚡ 召唤下一只</button>
-        <button class="btn btn-sub" onclick="doMeow()">🔊 听它喵一声</button>
-        <button class="btn btn-sub" onclick="download()">💾 保存图片</button>
-        <button class="btn btn-sub" onclick="copyLink()">🔗 复制链接</button>
-        <button class="btn btn-sub" onclick="share()">📤 分享给好友</button>
+    <button class="main-btn" onclick="getNewCat()">⚡ 召唤下一只</button>
+
+    <div class="action-grid">
+        <button class="btn-sub" onclick="makeMeow()">🔊 喵一声</button>
+        <button class="btn-sub" onclick="downloadImg()">💾 下载图片</button>
+        <button class="btn-sub" onclick="copyLink()">🔗 复制链接</button>
+        <button class="btn-sub" onclick="shareMe()">📤 分享好友</button>
     </div>
 
-    <div class="footer">Powered by The Cat API | 100% Real Meow Audio</div>
+    <p style="font-size: 0.7rem; color: #ccc; margin-top: 20px;">Powered by The Cat API</p>
 </div>
 
 <script>
-    // 📢 这里是内置的 Base64 真实猫叫声 (点击即响)
-    const meowAudioBase64 = "data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YTdvT18AAAAAAACeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCeAJ4AngCe
+    // 1. 获取猫咪图片
+    async function getNewCat() {
+        const img = document.getElementById('catImg');
+        const load = document.getElementById('loading');
+        
+        load.style.display = 'block';
+        img.style.display = 'none';
+        
+        try {
+            // 使用时间戳防止缓存
+            const response = await fetch(`https://api.thecatapi.com/v1/images/search?t=${new Date().getTime()}`);
+            const data = await response.json();
+            img.src = data[0].url;
+            img.onload = () => {
+                load.style.display = 'none';
+                img.style.display = 'block';
+            };
+        } catch (e) {
+            load.innerText = "召唤失败，请检查网络";
+        }
+    }
+
+    // 2. 滤镜功能
+    function applyF(filterValue, btn) {
+        document.getElementById('catImg').style.filter = filterValue;
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    // 3. 真正响的猫叫声 (Web Audio API 实时合成，不依赖外部文件)
+    function makeMeow() {
+        const context = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = context.createOscillator();
+        const gain = context.createGain();
+
+        osc.type = 'triangle';
+        // 模拟猫叫频率：由高到低
+        osc.frequency.setValueAtTime(700, context.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(400, context.currentTime + 0.4);
+
+        gain.gain.setValueAtTime(0, context.currentTime);
+        gain.gain.linearRampToValueAtTime(0.3, context.currentTime + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.01, context.currentTime + 0.5);
+
+        osc.connect(gain);
+        gain.connect(context.destination);
+
+        osc.start();
+        osc.stop(context.currentTime + 0.5);
+    }
+
+    // 4. 下载图片
+    function downloadImg() {
+        const src = document.getElementById('catImg').src;
+        if(!src) return;
+        const x = new XMLHttpRequest();
+        x.open("GET", src, true);
+        x.responseType = 'blob';
+        x.onload = function(e) {
+            const url = window.URL.createObjectURL(x.response);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "my_cat.jpg";
+            a.click();
+        }
+        x.send();
+    }
+
+    // 5. 复制链接
+    function copyLink() {
+        const src = document.getElementById('catImg').src;
+        navigator.clipboard.writeText(src);
+        alert("图片链接已复制！");
+    }
+
+    // 6. 分享
+    function shareMe() {
+        if(navigator.share) {
+            navigator.share({ title: '超萌猫咪', url: window.location.href });
+        } else {
+            alert("请复制浏览器地址栏分享！");
+        }
+    }
+
+    // 初始化加载第一张
+    window.onload = getNewCat;
+</script>
+
+</body>
+</html>
