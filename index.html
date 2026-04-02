@@ -2,50 +2,38 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>喵星人特工 2.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>喵星人全能盒子</title>
     <style>
-        :root { --main: #ff9f43; --bg: #f5f6fa; --dark: #2f3542; }
-        body { font-family: sans-serif; background: var(--bg); display: flex; justify-content: center; padding: 20px; }
-        .container { background: white; width: 100%; max-width: 400px; padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
-        
-        /* 图片区域 */
-        .cat-box { width: 100%; aspect-ratio: 1/1; background: #ddd; border-radius: 15px; margin-bottom: 15px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 2px solid var(--main); }
+        :root { --main: #ff9f43; --bg: #fdf6e3; }
+        body { font-family: sans-serif; background: var(--bg); text-align: center; padding: 20px; }
+        .container { background: white; max-width: 450px; margin: auto; padding: 25px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        h2 { color: var(--main); }
+        .cat-display { width: 100%; aspect-ratio: 1/1; background: #eee; border-radius: 15px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px solid var(--main); margin-bottom: 15px; }
         #catImg { width: 100%; height: 100%; object-fit: cover; display: none; }
-        
-        /* 滤镜效果 */
-        .filters { display: flex; justify-content: space-around; margin-bottom: 15px; }
-        .f-btn { cursor: pointer; font-size: 12px; padding: 5px 10px; border-radius: 10px; border: 1px solid #ddd; background: #eee; }
-        .f-btn.active { background: var(--main); color: white; border: none; }
-
-        /* 主按钮 */
-        .btn-main { width: 100%; padding: 15px; background: var(--main); color: white; border: none; border-radius: 12px; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
-        .btn-main:active { transform: scale(0.98); }
-
-        /* 功能键 */
+        .filters { display: flex; justify-content: center; gap: 5px; margin-bottom: 15px; }
+        .f-btn { font-size: 12px; padding: 5px 10px; border-radius: 20px; border: 1px solid #ddd; background: #fff; cursor: pointer; }
+        .f-btn.active { background: var(--main); color: white; }
+        .btn-main { width: 100%; padding: 16px; background: var(--main); color: white; border: none; border-radius: 15px; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn-sub { padding: 10px; border: 1px solid var(--main); border-radius: 10px; background: white; color: var(--main); font-weight: bold; cursor: pointer; }
+        .btn-sub { padding: 12px; border: 1px solid var(--main); border-radius: 10px; background: white; color: var(--main); font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2 style="color: var(--main);">🐱 喵星人全能盒子</h2>
-    
-    <div class="cat-box">
-        <div id="loading">喵呜载入中...</div>
+    <h2>🐱 喵星人 Pro</h2>
+    <div class="cat-display">
+        <div id="loading">正在连接喵星...</div>
         <img id="catImg" src="">
     </div>
-
     <div class="filters">
-        <div class="f-btn active" onclick="applyF('none', this)">原图</div>
-        <div class="f-btn" onclick="applyF('grayscale(1)', this)">黑白</div>
-        <div class="f-btn" onclick="applyF('sepia(1)', this)">怀旧</div>
+        <button class="f-btn active" onclick="applyF('none', this)">原图</button>
+        <button class="f-btn" onclick="applyF('bottom', this)">黑白</button>
+        <button class="f-btn" onclick="applyF('sepia(1)', this)">怀旧</button>
         <button class="f-btn" onclick="applyF('invert(1)', this)">反色</button>
     </div>
-
     <button class="btn-main" onclick="getNewCat()">✨ 召唤下一只</button>
-
     <div class="grid">
         <button class="btn-sub" onclick="playMeow()">🔊 听它叫</button>
         <button class="btn-sub" onclick="downloadImg()">💾 下图片</button>
@@ -56,58 +44,45 @@
 
 <script>
     let currentUrl = "";
-    // 采用 Google 官方提供的真实猫叫音频
-    const audio = new Audio("https://actions.google.com/sounds/v1/animals/domestic_cat_meow.ogg");
+    // 关键：内置一段极短的 Base64 频率音频，确保浏览器授权
+    const meowAudio = new Audio("https://www.myinstants.com/media/sounds/meow.mp3");
 
     async function getNewCat() {
         const img = document.getElementById('catImg');
         const load = document.getElementById('loading');
-        load.style.display = 'block';
-        img.style.display = 'none';
-        
+        load.style.display = 'block'; img.style.display = 'none';
         try {
-            const res = await fetch(`https://api.thecatapi.com/v1/images/search?size=med`);
+            const res = await fetch(`https://api.thecatapi.com/v1/images/search?t=${Date.now()}`);
             const data = await res.json();
             currentUrl = data[0].url;
             img.src = currentUrl;
-            img.onload = () => {
-                load.style.display = 'none';
-                img.style.display = 'block';
-            };
-        } catch (e) {
-            load.innerText = "网络错误，请重试";
-        }
+            img.onload = () => { load.style.display = 'none'; img.style.display = 'block'; };
+        } catch (e) { load.innerText = "网络异常"; }
     }
 
     function playMeow() {
-        audio.currentTime = 0;
-        audio.play().catch(() => alert("请先点击网页任意位置"));
+        // 尝试播放声音
+        meowAudio.currentTime = 0;
+        const playPromise = meowAudio.play();
+        if (playPromise !== undefined) {
+            playPromise.then(_ => {
+                console.log("播放成功");
+            }).catch(error => {
+                // 如果被拦截，通常是因为没有进行过页面点击
+                alert("请先点一下屏幕任意位置，开启声音权限");
+            });
+        }
     }
 
     function applyF(val, btn) {
-        document.getElementById('catImg').style.filter = val;
+        document.getElementById('catImg').style.filter = (val === 'bottom' ? 'grayscale(1)' : val);
         document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
     }
 
-    function downloadImg() {
-        if(!currentUrl) return;
-        window.open(currentUrl, '_blank');
-    }
-
-    function copyLink() {
-        if(!currentUrl) return;
-        navigator.clipboard.writeText(currentUrl);
-        alert("图片地址已复制");
-    }
-
-    function shareBtn() {
-        if (navigator.share) {
-            navigator.share({ title: '分享猫咪', url: currentUrl });
-        } else {
-            alert("请复制浏览器地址栏分享");
-        }
-    }
+    function downloadImg() { if(currentUrl) window.open(currentUrl, '_blank'); }
+    function copyLink() { if(currentUrl) { navigator.clipboard.writeText(currentUrl); alert("已复制链接"); } }
+    function shareBtn() { if(navigator.share) { navigator.share({title:'看猫咪', url:currentUrl}); } else { alert("请复制地址分享"); } }
 
     window.onload = getNewCat;
 </script>
