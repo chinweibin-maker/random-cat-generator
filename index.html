@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>喵星人百科 至尊版 | Cat Discovery Ultra</title>
+    <title>喵星人百科 至尊版 | Real Cat Sounds</title>
     <style>
         :root { --p: #ff9f43; --s: #ee5253; --bg: #fdf6e3; --shadow: rgba(238, 82, 83, 0.2); }
         body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #333; margin: 0; padding: 20px; display: flex; justify-content: center; }
@@ -14,7 +14,6 @@
         #image-wrapper { position: relative; min-height: 320px; background: #eee; border-radius: 20px; overflow: hidden; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; border: 4px solid #fff; box-shadow: 0 8px 16px rgba(0,0,0,0.05); }
         img { width: 100%; max-height: 500px; display: none; object-fit: cover; transition: 0.5s filter; }
         
-        /* 滤镜控制 */
         .filter-bar { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
         .filter-btn { font-size: 0.7rem; padding: 5px 10px; border: 1px solid #ddd; border-radius: 20px; cursor: pointer; background: #fff; }
         .filter-btn.active { background: var(--s); color: #fff; border-color: var(--s); }
@@ -26,7 +25,10 @@
         button { padding: 15px; border: none; border-radius: 15px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 0.9rem; }
         .btn-gen { background: var(--p); color: white; grid-column: span 2; font-size: 1.1rem; }
         .btn-action { background: #f1f2f6; color: #555; }
+        .btn-action.playing { background: #ffeaa7; color: #d35400; animation: pulse 0.5s infinite; }
         button:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
 
         .favorites { margin-top: 25px; text-align: left; border-top: 2px dashed #f0f0f0; padding-top: 20px; }
         .fav-title { font-size: 0.85rem; font-weight: bold; color: #aaa; margin-bottom: 12px; display: flex; justify-content: space-between; }
@@ -61,18 +63,19 @@
         <button class="btn-gen" onclick="fetchCat()">✨ 召唤新猫咪</button>
         <button class="btn-action" onclick="saveFavorite()">❤️ 收藏</button>
         <button class="btn-action" onclick="downloadCat()">💾 下载</button>
-        <button class="btn-action" onclick="playMeow()">🔊 喵一声</button>
+        <button class="btn-action" id="meowBtn" onclick="playMeow()">🔊 喵一声</button>
         <button class="btn-action" onclick="shareCat()">🔗 分享</button>
     </div>
 
     <div class="favorites">
-        <div class="fav-title"><span>我的萌宠馆</span> <small style="font-weight:normal" onclick="clearFavs()">[清空]</small></div>
-        <div id="favList" class="fav-list"></div>
+        <div class="fav-title"><span>我的萌宠馆</span> <small style="font-weight:normal; cursor:pointer;" onclick="clearFavs()">[清空]</small></div>
+        <div id="favList" class="fav-list">暂无收藏</div>
     </div>
 </div>
 
 <script>
     let currentUrl = "";
+    let audio = null;
 
     async function fetchCat() {
         const loader = document.getElementById('loader');
@@ -108,10 +111,45 @@
         btn.classList.add('active');
     }
 
-    function playMeow() {
-        // 随机喵叫 API
-        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/160/160-preview.mp3');
-        audio.play();
+    // --- 核心更新：高品质随机猫音逻辑 ---
+    async function playMeow() {
+        if(audio && !audio.paused) return; // 防止重复点击
+        
+        const meowBtn = document.getElementById('meowBtn');
+        meowBtn.innerText = "📡 连接中...";
+        meowBtn.classList.add('playing');
+
+        // 这是专门提供高品质野生动物音效的稳定免费 API
+        const soundApi = 'https://universal-sound-api.onrender.com/api/sound?q=cat_meow&type=mp3&random=1';
+
+        try {
+            if(audio) audio.pause(); // 停止旧声音
+            
+            // 1. 创建新的音频对象
+            audio = new Audio(soundApi);
+            
+            // 2. 监听加载完成事件
+            audio.oncanplaythrough = () => {
+                meowBtn.innerText = "🔊 正在喵...";
+                audio.play();
+            };
+
+            // 3. 监听播放结束事件
+            audio.onended = () => {
+                meowBtn.innerText = "🔊 喵一声";
+                meowBtn.classList.remove('playing');
+            };
+
+            // 4. 监听网络错误
+            audio.onerror = () => { throw new Error("Audio Error"); };
+
+        } catch (e) { 
+            meowBtn.innerText = "❌ 喵不动了"; 
+            setTimeout(()=> {
+                meowBtn.innerText = "🔊 喵一声";
+                meowBtn.classList.remove('playing');
+            }, 1000);
+        }
     }
 
     function downloadCat() {
@@ -125,16 +163,16 @@
     }
 
     function saveFavorite() {
-        let favs = JSON.parse(localStorage.getItem('my_cats_ultra') || '[]');
+        let favs = JSON.parse(localStorage.getItem('my_cats_ultra_v2') || '[]');
         if (favs.includes(currentUrl)) return;
         favs.unshift(currentUrl);
-        localStorage.setItem('my_cats_ultra', JSON.stringify(favs.slice(0, 15)));
+        localStorage.setItem('my_cats_ultra_v2', JSON.stringify(favs.slice(0, 15)));
         renderFavs();
     }
 
     function renderFavs() {
         const list = document.getElementById('favList');
-        const favs = JSON.parse(localStorage.getItem('my_cats_ultra') || '[]');
+        const favs = JSON.parse(localStorage.getItem('my_cats_ultra_v2') || '[]');
         list.innerHTML = favs.map(url => `<img src="${url}" class="fav-thumb" onclick="window.open('${url}')">`).join('') || '暂无收藏';
     }
 
@@ -147,7 +185,7 @@
     }
 
     function clearFavs() {
-        localStorage.removeItem('my_cats_ultra');
+        localStorage.removeItem('my_cats_ultra_v2');
         renderFavs();
     }
 
