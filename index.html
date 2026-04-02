@@ -9,47 +9,40 @@
             --gold: #f1c40f; --purple: #6c5ce7; --bg: #0f0e17;
             --card: #1b1a23; --text: #a7a9be; --bright: #fffffe; --accent: #e67e22;
         }
-
         body { font-family: 'PingFang SC', system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 15px; display: flex; justify-content: center; }
-        .master-container { width: 100%; max-width: 420px; background: var(--card); padding: 25px; border-radius: 30px; border: 1px solid #2d2b38; box-shadow: 0 20px 50px rgba(0,0,0,0.5); text-align: center; box-sizing: border-box; }
-
-        h1 { color: var(--bright); font-size: 1.6rem; margin: 0 0 5px 0; letter-spacing: 2px; }
+        .master-container { width: 100%; max-width: 420px; background: var(--card); padding: 25px; border-radius: 30px; border: 1px solid #2d2b38; box-shadow: 0 20px 50px rgba(0,0,0,0.5); text-align: center; }
+        
+        h1 { color: var(--bright); font-size: 1.6rem; margin-bottom: 5px; }
         .tagline { color: var(--purple); font-size: 0.75rem; font-weight: bold; margin-bottom: 20px; }
 
         .input-group { text-align: left; margin-bottom: 12px; }
-        label { font-size: 0.7rem; color: var(--purple); font-weight: bold; margin-bottom: 5px; display: block; padding-left: 5px; }
+        label { font-size: 0.7rem; color: var(--purple); font-weight: bold; margin-bottom: 5px; display: block; }
+        input, select { width: 100%; padding: 12px; background: #0f0e17; border: 1px solid #333; border-radius: 12px; color: var(--bright); font-size: 1rem; box-sizing: border-box; outline: none; }
+
+        .btn-calc { width: 100%; padding: 18px; background: linear-gradient(135deg, var(--purple), var(--accent)); color: white; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 10px; }
         
-        input, select { width: 100%; padding: 12px; background: #0f0e17; border: 1px solid #333; border-radius: 12px; color: var(--bright); font-size: 1rem; box-sizing: border-box; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--purple); }
-
-        .btn-calc { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--purple), var(--accent)); color: white; border: none; border-radius: 15px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 5px; box-shadow: 0 8px 20px rgba(108, 92, 231, 0.3); }
-        .btn-calc:active { transform: scale(0.98); }
-
-        #resultView { margin-top: 25px; display: none; animation: slideUp 0.6s ease forwards; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
+        #resultView { margin-top: 25px; display: none; }
         .res-card { background: #24222e; padding: 18px; border-radius: 20px; margin-bottom: 15px; border: 1px solid #363346; text-align: left; }
-        .res-header { font-size: 0.8rem; color: var(--gold); font-weight: bold; margin-bottom: 12px; border-bottom: 1px solid #333; padding-bottom: 6px; }
-
-        /* 塔罗区 */
-        .tarot-box { display: flex; align-items: center; gap: 15px; }
-        .tarot-card { width: 70px; height: 110px; background: linear-gradient(45deg, #1a1a2e, #16213e); border: 2px solid var(--gold); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 2rem; flex-shrink: 0; }
-
-        /* 运势条 */
-        .stat-row { display: flex; align-items: center; margin: 8px 0; font-size: 0.8rem; color: var(--bright); }
-        .stat-bar { flex: 1; height: 6px; background: #111; border-radius: 4px; margin-left: 10px; overflow: hidden; }
-        .stat-fill { height: 100%; background: linear-gradient(90deg, var(--purple), var(--gold)); width: 0; transition: width 1.5s ease; }
+        .res-header { font-size: 0.8rem; color: var(--gold); font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 5px; }
 
         /* 八字网格 */
-        .bazi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 12px; }
-        .pillar { background: #0f0e17; padding: 10px 5px; border-radius: 12px; text-align: center; border: 1px solid #444; }
-        .p-char { font-size: 1.4rem; font-weight: bold; color: var(--gold); line-height: 1.2; white-space: pre-line; }
-        .p-tag { font-size: 0.6rem; color: #666; margin-top: 5px; }
+        .bazi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+        .pillar { background: #0f0e17; padding: 10px 5px; border-radius: 10px; text-align: center; border: 1px solid #444; }
+        .p-char { font-size: 1.3rem; font-weight: bold; color: var(--gold); white-space: pre-line; }
 
-        /* 猫咪区 */
-        .cat-display { position: relative; width: 100%; border-radius: 15px; overflow: hidden; margin-top: 10px; border: 2px solid #333; }
-        #catImg { width: 100%; display: none; }
-        .btn-meow { background: #333; color: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; margin-top: 10px; width: 100%; font-weight: bold; }
+        /* 运势条 */
+        .stat-row { display: flex; align-items: center; margin: 8px 0; font-size: 0.8rem; }
+        .stat-bar { flex: 1; height: 6px; background: #111; border-radius: 3px; margin-left: 10px; overflow: hidden; }
+        .stat-fill { height: 100%; background: var(--gold); width: 0; transition: width 1s; }
+
+        /* 猫咪图 */
+        .cat-box { position: relative; width: 100%; border-radius: 15px; overflow: hidden; margin-top: 10px; }
+        #catImg { width: 100%; display: block; border-radius: 15px; }
+
+        .btn-action { width: 100%; padding: 12px; margin-top: 10px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        .btn-copy { background: #444; color: white; }
+        .btn-share { background: #4285F4; color: white; }
+        .btn-meow { background: #333; color: #00ffcc; border: 1px solid #00ffcc; }
         
         .highlight { color: var(--accent); font-weight: bold; }
     </style>
@@ -58,16 +51,15 @@
 
 <div class="master-container">
     <h1>🔮 玄学全能大师</h1>
-    <div class="tagline">TAROT · BAZI · LUCK · CATS</div>
+    <p class="tagline">Personal Astro & Bazi & Tarot</p>
 
     <div class="input-group">
-        <label>出生日期 (Date of Birth)</label>
-        <input type="date" id="inDate">
+        <label>出生日期</label>
+        <input type="date" id="dateIn">
     </div>
-    
     <div class="input-group">
-        <label>出生时辰 (Birth Hour)</label>
-        <select id="inHour">
+        <label>出生时辰</label>
+        <select id="hourIn">
             <option value="0">子时 (23:00-01:00)</option>
             <option value="1">丑时 (01:00-03:00)</option>
             <option value="3">寅时 (03:00-05:00)</option>
@@ -83,101 +75,93 @@
         </select>
     </div>
 
-    <button class="btn-calc" onclick="startMiracle()">开启天机 / Start</button>
+    <button class="btn-calc" onclick="doEverything()">一键推算命运</button>
 
     <div id="resultView">
         <div class="res-card">
-            <div class="res-header">🃏 灵魂塔罗 (Tarot)</div>
-            <div class="tarot-box">
-                <div class="tarot-card" id="tEmoji">✨</div>
-                <div style="flex:1">
-                    <div style="font-weight:bold; color:var(--bright); font-size:1rem;" id="tName">抽取中...</div>
-                    <div style="font-size:0.8rem; margin-top:5px; line-height:1.4;" id="tDesc">...</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="res-card">
-            <div class="res-header">✨ 核心命盘 (Main Bazi)</div>
-            <div style="display: flex; justify-content: space-around; margin-bottom: 10px;">
-                <span>生肖: <span id="outZodiac" class="highlight">-</span></span>
-                <span>星座: <span id="outHoro" class="highlight">-</span></span>
-            </div>
+            <div class="res-header">✨ 核心命盘</div>
+            <p>生肖：<span id="zodiacRes" class="highlight"></span> | 星座：<span id="horoRes" class="highlight"></span></p>
             <div class="bazi-grid">
-                <div class="pillar"><div class="p-char" id="bz4">-</div><div class="p-tag">时</div></div>
-                <div class="pillar"><div class="p-char" id="bz3">-</div><div class="p-tag">日</div></div>
-                <div class="pillar"><div class="p-char" id="bz2">-</div><div class="p-tag">月</div></div>
-                <div class="pillar"><div class="p-char" id="bz1">-</div><div class="p-tag">年</div></div>
+                <div class="pillar"><div class="p-char" id="bz4"></div><div style="font-size:0.6rem">时</div></div>
+                <div class="pillar"><div class="p-char" id="bz3"></div><div style="font-size:0.6rem">日</div></div>
+                <div class="pillar"><div class="p-char" id="bz2"></div><div style="font-size:0.6rem">月</div></div>
+                <div class="pillar"><div class="p-char" id="bz1"></div><div style="font-size:0.6rem">年</div></div>
             </div>
         </div>
 
         <div class="res-card">
-            <div class="res-header">📅 今日流年 (Daily Luck)</div>
-            <div class="stat-row">事业 <div class="stat-bar"><div id="bar1" class="stat-fill"></div></div></div>
-            <div class="stat-row">财运 <div class="stat-bar"><div id="bar2" class="stat-fill"></div></div></div>
-            <div class="stat-row">感情 <div class="stat-bar"><div id="bar3" class="stat-fill"></div></div></div>
+            <div class="res-header">🃏 灵魂塔罗</div>
+            <p id="tarotTitle" class="highlight" style="font-size:1.1rem; margin:5px 0;"></p>
+            <p id="tarotDesc" style="font-size:0.85rem; color:#ccc;"></p>
         </div>
 
         <div class="res-card">
-            <div class="res-header">🐱 守护喵星人 (Guardian Cat)</div>
-            <div class="cat-display">
-                <div id="catLoad" style="padding:20px; font-size:0.8rem;">正在连接喵星...</div>
-                <img id="catImg" src="" alt="Cat">
-            </div>
-            <button class="btn-meow" id="meowBtn" onclick="realMeow()">🔊 听它喵一声</button>
+            <div class="res-header">📅 今日运势</div>
+            <div class="stat-row">事业 <div class="stat-bar"><div id="b1" class="stat-fill"></div></div></div>
+            <div class="stat-row">财运 <div class="stat-bar"><div id="b2" class="stat-fill"></div></div></div>
+            <div class="stat-row">缘分 <div class="stat-bar"><div id="b3" class="stat-fill"></div></div></div>
         </div>
+
+        <div class="res-card">
+            <div class="res-header">☯️ 风水建议</div>
+            <p style="font-size:0.85rem">今日财位：<span id="f1" class="highlight"></span></p>
+            <p style="font-size:0.85rem">幸运颜色：<span id="f2" class="highlight"></span></p>
+        </div>
+
+        <div class="res-card" style="text-align:center;">
+            <div class="res-header">🐱 守护喵星人</div>
+            <div class="cat-box"><img id="catImg" src=""></div>
+            <button class="btn-meow" onclick="playMeow()">🔊 听它喵一声</button>
+        </div>
+
+        <button class="btn-action btn-copy" onclick="copyResults()">📋 复制测算结果</button>
+        <button class="btn-action btn-share" onclick="sharePage()">🔗 分享给好友</button>
     </div>
 </div>
 
 <script>
-    const tarotDeck = [
-        { name: "愚者", em: "🃏", desc: "纯粹的开始，今日适合冒险。" },
-        { name: "魔术师", em: "🪄", desc: "万事俱备，你的计划会成功。" },
-        { name: "女祭司", em: "🌙", desc: "直觉极准，多听听内心的声音。" },
-        { name: "力量", em: "🦁", desc: "内在的坚韧能帮你克服困难。" },
-        { name: "正义", em: "⚖️", desc: "因果循环，今日会有公平的交代。" }
+    const tarotList = [
+        {n:"愚者", d:"新的开始，勇敢去尝试！"}, {n:"魔术师", d:"你拥有无限潜能。"}, 
+        { name: "女祭司", d: "相信你的直觉。" }, { name: "恋人", d: "人际关系和谐美满。" }
     ];
 
-    // 真正的猫叫声 API 列表
-    const REAL_SOUNDS = [
+    // 解决“喝水声”：使用不同来源的真实猫叫
+    const MEOWS = [
         "https://cdn.freesound.org/previews/256/256334_4486188-lq.mp3",
-        "https://cdn.freesound.org/previews/415/415209_5121236-lq.mp3",
-        "https://cdn.freesound.org/previews/459/459992_9154694-lq.mp3",
-        "https://cdn.freesound.org/previews/110/110011_1446700-lq.mp3"
+        "https://cdn.freesound.org/previews/459/459992_9154694-lq.mp3"
     ];
 
-    async function startMiracle() {
-        const dStr = document.getElementById('inDate').value;
-        const hour = parseInt(document.getElementById('inputHour') ? document.getElementById('inputHour').value : 0);
-        if (!dStr) { alert("请选择出生日期！"); return; }
+    function doEverything() {
+        const dStr = document.getElementById('dateIn').value;
+        const hour = parseInt(document.getElementById('hourIn').value);
+        if(!dStr) return alert("请选日期");
 
         const date = new Date(dStr);
         const y = date.getFullYear(), m = date.getMonth()+1, d = date.getDate();
 
-        // 1. 生肖星座 (Python 逻辑复刻)
-        const zodiacs = ["猴","鸡","狗","猪","鼠","牛","虎","兔","龙","蛇","马","羊"];
-        document.getElementById('outZodiac').innerText = zodiacs[y % 12];
+        // 生肖与星座
+        const zs = ["猴","鸡","狗","猪","鼠","牛","虎","兔","龙","蛇","马","羊"];
+        document.getElementById('zodiacRes').innerText = zs[y % 12];
         
-        let horo = "双鱼";
-        if ((m == 3 && d >= 21) || (m == 4 && d <= 19)) horo = "白羊";
-        else if ((m == 4 && d >= 20) || (m == 5 && d <= 20)) horo = "金牛";
-        else if ((m == 5 && d >= 21) || (m == 6 && d <= 21)) horo = "双子";
-        else if ((m == 6 && d >= 22) || (m == 7 && d <= 22)) horo = "巨蟹";
-        else if ((m == 7 && d >= 23) || (m == 8 && d <= 22)) horo = "狮子";
-        else if ((m == 8 && d >= 23) || (m == 9 && d <= 22)) horo = "处女";
-        else if ((m == 9 && d >= 23) || (m == 10 && d <= 23)) horo = "天秤";
-        else if ((m == 10 && d >= 24) || (m == 11 && d <= 22)) horo = "天蝎";
-        else if ((m == 11 && d >= 23) || (m == 12 && d <= 21)) horo = "射手";
-        else if ((m == 12 && d >= 22) || (m == 1 && d <= 19)) horo = "摩羯";
-        else if ((m == 1 && d >= 20) || (m == 2 && d <= 18)) horo = "水瓶";
-        document.getElementById('outHoro').innerText = horo + "座";
+        let hr = "双鱼座";
+        if ((m == 3 && d >= 21) || (m == 4 && d <= 19)) hr = "白羊座";
+        else if ((m == 4 && d >= 20) || (m == 5 && d <= 20)) hr = "金牛座";
+        else if ((m == 5 && d >= 21) || (m == 6 && d <= 21)) hr = "双子座";
+        else if ((m == 6 && d >= 22) || (m == 7 && d <= 22)) hr = "巨蟹座";
+        else if ((m == 7 && d >= 23) || (m == 8 && d <= 22)) hr = "狮子座";
+        else if ((m == 8 && d >= 23) || (m == 9 && d <= 22)) hr = "处女座";
+        else if ((m == 9 && d >= 23) || (m == 10 && d <= 23)) hr = "天秤座";
+        else if ((m == 10 && d >= 24) || (m == 11 && d <= 22)) hr = "天蝎座";
+        else if ((m == 11 && d >= 23) || (m == 12 && d <= 21)) hr = "射手座";
+        else if ((m == 12 && d >= 22) || (m == 1 && d <= 19)) hr = "摩羯座";
+        else if ((m == 1 && d >= 20) || (m == 2 && d <= 18)) hr = "水瓶座";
+        document.getElementById('horoRes').innerText = hr;
 
-        // 2. 八字
+        // 八字
         const G = "甲乙丙丁戊己庚辛壬癸", Z = "子丑寅卯辰巳午未申酉戌亥";
         let nG = G[(y-4)%10], nZ = Z[(y-4)%12];
         let mG = G[((y%5)*2 + m + 1)%10], mZ = Z[(m+1)%12];
-        let base = new Date(1900, 0, 31);
-        let diff = Math.floor((date - base) / 86400000);
+        let diff = Math.floor((date - new Date(1900,0,31))/86400000);
         let rG = G[diff%10], rZ = Z[(diff+4)%12];
         let sG = G[((diff%5)*2 + Math.floor((hour+1)/2))%10], sZ = Z[Math.floor((hour+1)/2)%12];
 
@@ -186,41 +170,49 @@
         document.getElementById('bz3').innerText = rG + "\n" + rZ;
         document.getElementById('bz4').innerText = sG + "\n" + sZ;
 
-        // 3. 塔罗
-        const tIdx = (y + m + d) % tarotDeck.length;
-        document.getElementById('tEmoji').innerText = tarotDeck[tIdx].em;
-        document.getElementById('tName').innerText = tarotDeck[tIdx].name;
-        document.getElementById('tDesc').innerText = tarotDeck[tIdx].desc;
+        // 塔罗
+        const t = tarotList[(y+m+d)%tarotList.length];
+        document.getElementById('tarotTitle').innerText = t.n;
+        document.getElementById('tarotDesc').innerText = t.d;
 
-        // 4. 运势动画
+        // 运势动画
         document.getElementById('resultView').style.display = 'block';
-        setTimeout(() => {
-            document.getElementById('bar1').style.width = (60 + (y%30)) + "%";
-            document.getElementById('bar2').style.width = (50 + (m*3)) + "%";
-            document.getElementById('bar3').style.width = (70 + (d%25)) + "%";
+        setTimeout(()=> {
+            document.getElementById('b1').style.width = (60+y%30)+"%";
+            document.getElementById('b2').style.width = (50+m*3)+"%";
+            document.getElementById('b3').style.width = (70+d%25)+"%";
         }, 100);
 
-        // 5. 召唤猫咪图片
-        fetch('https://api.thecatapi.com/v1/images/search')
-            .then(r => r.json())
-            .then(data => {
-                const img = document.getElementById('catImg');
-                img.src = data[0].url;
-                img.onload = () => {
-                    document.getElementById('catLoad').style.display = 'none';
-                    img.style.display = 'block';
-                };
-            });
+        // 风水
+        document.getElementById('f1').innerText = ["正东","正西","正南","正北"][d%4];
+        document.getElementById('f2').innerText = ["金","木","水","火","土"][m%5] + "色系";
+
+        // 猫咪图
+        fetch('https://api.thecatapi.com/v1/images/search').then(r=>r.json()).then(data=>{
+            document.getElementById('catImg').src = data[0].url;
+        });
     }
 
-    function realMeow() {
-        const btn = document.getElementById('meowBtn');
-        btn.innerText = "🐱 喵呜~";
-        // 随机挑选一个真实猫叫链接
-        const randomSound = REAL_SOUNDS[Math.floor(Math.random() * REAL_SOUNDS.length)];
-        const audio = new Audio(randomSound);
-        audio.play().catch(() => alert("由于浏览器限制，请先点击页面任意处再试"));
-        setTimeout(() => btn.innerText = "🔊 喵一声", 1000);
+    function playMeow() {
+        const sound = MEOWS[Math.floor(Math.random()*MEOWS.length)];
+        new Audio(sound).play();
+    }
+
+    function copyResults() {
+        const z = document.getElementById('zodiacRes').innerText;
+        const h = document.getElementById('horoRes').innerText;
+        const t = document.getElementById('tarotTitle').innerText;
+        const text = `我的测算结果：生肖${z}，星座${h}，灵魂塔罗是${t}。你也来试试看！`;
+        navigator.clipboard.writeText(text);
+        alert("结果已复制到剪贴板！");
+    }
+
+    function sharePage() {
+        if(navigator.share) {
+            navigator.share({ title: '玄学全能大师', url: window.location.href });
+        } else {
+            alert("请复制浏览器地址分享给好友！");
+        }
     }
 </script>
 </body>
