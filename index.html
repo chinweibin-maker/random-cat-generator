@@ -3,61 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>随机猫咪生成器 🐱</title>
+    <title>喵星人百科 至尊版 | Cat Discovery Ultra</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; text-align: center; background-color: #fdf6e3; padding-top: 50px; color: #333; }
-        .container { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); display: inline-block; max-width: 500px; width: 90%; }
-        button { font-size: 18px; font-weight: bold; padding: 12px 25px; cursor: pointer; background-color: #ff9f43; border: none; border-radius: 8px; color: white; transition: 0.3s; box-shadow: 0 4px 6px rgba(255, 159, 67, 0.3); }
-        button:hover { background-color: #ee5253; transform: translateY(-2px); }
-        img { max-width: 100%; max-height: 400px; border-radius: 10px; margin-top: 20px; display: none; object-fit: cover; }
-        #loading { font-size: 16px; color: #888; margin-top: 20px; display: none; font-style: italic; }
-        .tech-note { margin-top: 30px; font-size: 12px; color: #aaa; border-top: 1px solid #eee; padding-top: 10px; }
+        :root { --p: #ff9f43; --s: #ee5253; --bg: #fdf6e3; --shadow: rgba(238, 82, 83, 0.2); }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #333; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        
+        .card { background: white; padding: 25px; border-radius: 30px; box-shadow: 0 20px 40px var(--shadow); width: 100%; max-width: 480px; text-align: center; }
+        h1 { font-size: 1.6rem; margin-top: 0; color: var(--s); letter-spacing: 1px; }
+        
+        #image-wrapper { position: relative; min-height: 320px; background: #eee; border-radius: 20px; overflow: hidden; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; border: 4px solid #fff; box-shadow: 0 8px 16px rgba(0,0,0,0.05); }
+        img { width: 100%; max-height: 500px; display: none; object-fit: cover; transition: 0.5s filter; }
+        
+        /* 滤镜控制 */
+        .filter-bar { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
+        .filter-btn { font-size: 0.7rem; padding: 5px 10px; border: 1px solid #ddd; border-radius: 20px; cursor: pointer; background: #fff; }
+        .filter-btn.active { background: var(--s); color: #fff; border-color: var(--s); }
+
+        .info-panel { text-align: left; background: linear-gradient(135deg, #fffaf0, #fff); padding: 18px; border-radius: 15px; margin-bottom: 20px; border-left: 5px solid var(--p); display: none; }
+        .breed-name { font-weight: bold; color: var(--s); font-size: 1.2rem; margin-bottom: 5px; display: block; }
+
+        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        button { padding: 15px; border: none; border-radius: 15px; font-weight: bold; cursor: pointer; transition: 0.3s; font-size: 0.9rem; }
+        .btn-gen { background: var(--p); color: white; grid-column: span 2; font-size: 1.1rem; }
+        .btn-action { background: #f1f2f6; color: #555; }
+        button:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+        .favorites { margin-top: 25px; text-align: left; border-top: 2px dashed #f0f0f0; padding-top: 20px; }
+        .fav-title { font-size: 0.85rem; font-weight: bold; color: #aaa; margin-bottom: 12px; display: flex; justify-content: space-between; }
+        .fav-list { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
+        .fav-thumb { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; cursor: pointer; transition: 0.3s; }
+        .fav-thumb:hover { transform: scale(1.1); }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>🐱 随机喵星人召唤器</h1>
-        <p>点击按钮，通过 API 从云端召唤一只猫咪</p>
-        
-        <button onclick="fetchCat()">立刻召唤！</button>
-        
-        <div id="loading">正在连接猫咪星球，请稍候... 🚀</div>
-        <img id="catImage" src="" alt="一只可爱的猫咪">
-        
-        <div class="tech-note">Powered by The Cat API & JavaScript Fetch</div>
+<div class="card">
+    <h1>🐾 喵星人百科 至尊版</h1>
+    
+    <div id="image-wrapper">
+        <div id="loader">🐈 喵力加载中...</div>
+        <img id="catImg" src="" alt="加载失败">
     </div>
 
-    <script>
-        // 这是你的核心商业逻辑：如何通过 API 抓取数据
-        function fetchCat() {
-            // 1. 按下按钮时，显示加载文字，隐藏旧照片
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('catImage').style.display = 'none';
+    <div class="filter-bar">
+        <div class="filter-btn active" onclick="setFilter('none', this)">原图</div>
+        <div class="filter-btn" onclick="setFilter('grayscale(100%)', this)">黑白</div>
+        <div class="filter-btn" onclick="setFilter('sepia(80%)', this)">复古</div>
+        <div class="filter-btn" onclick="setFilter('brightness(1.2)', this)">明亮</div>
+    </div>
 
-            // 2. 发送请求给服务器 (这就是 API 串接的核心代码！)
-            fetch('https://api.thecatapi.com/v1/images/search')
-                .then(response => response.json()) // 把服务器返回的复杂数据转换成 JSON 格式
-                .then(data => {
-                    // 3. 从 JSON 数据中精准提取出图片的 URL 网址
-                    const catUrl = data[0].url;
-                    
-                    // 4. 把提取出来的网址塞给网页里的 <img> 标签，然后显示出来
-                    document.getElementById('catImage').src = catUrl;
-                    
-                    // 等图片加载完再显示出来，体验更好
-                    document.getElementById('catImage').onload = function() {
-                        document.getElementById('loading').style.display = 'none';
-                        document.getElementById('catImage').style.display = 'block';
-                    }
-                })
-                .catch(error => {
-                    // 5. 如果服务器挂了或者没网，要有错误处理机制
-                    alert('哎呀，云端猫咪走丢了，请检查网络重试！');
-                    document.getElementById('loading').style.display = 'none';
-                });
+    <div id="infoPanel" class="info-panel">
+        <span class="breed-name" id="breedName">品种档案</span>
+        <div id="breedDesc" style="font-size: 0.85rem; line-height: 1.5; color: #666;"></div>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn-gen" onclick="fetchCat()">✨ 召唤新猫咪</button>
+        <button class="btn-action" onclick="saveFavorite()">❤️ 收藏</button>
+        <button class="btn-action" onclick="downloadCat()">💾 下载</button>
+        <button class="btn-action" onclick="playMeow()">🔊 喵一声</button>
+        <button class="btn-action" onclick="shareCat()">🔗 分享</button>
+    </div>
+
+    <div class="favorites">
+        <div class="fav-title"><span>我的萌宠馆</span> <small style="font-weight:normal" onclick="clearFavs()">[清空]</small></div>
+        <div id="favList" class="fav-list"></div>
+    </div>
+</div>
+
+<script>
+    let currentUrl = "";
+
+    async function fetchCat() {
+        const loader = document.getElementById('loader');
+        const img = document.getElementById('catImg');
+        const info = document.getElementById('infoPanel');
+        
+        loader.style.display = 'block';
+        img.style.display = 'none';
+        info.style.display = 'none';
+
+        try {
+            const r = await fetch('https://api.thecatapi.com/v1/images/search?has_breeds=1');
+            const data = await r.json();
+            const cat = data[0];
+            currentUrl = cat.url;
+
+            img.src = currentUrl;
+            img.onload = () => {
+                loader.style.display = 'none';
+                img.style.display = 'block';
+                if (cat.breeds && cat.breeds.length > 0) {
+                    info.style.display = 'block';
+                    document.getElementById('breedName').innerText = "📖 " + cat.breeds[0].name;
+                    document.getElementById('breedDesc').innerText = cat.breeds[0].description;
+                }
+            };
+        } catch (e) { loader.innerText = "❌ 喵星人信号中断"; }
+    }
+
+    function setFilter(filter, btn) {
+        document.getElementById('catImg').style.filter = filter;
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    function playMeow() {
+        // 随机喵叫 API
+        const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/160/160-preview.mp3');
+        audio.play();
+    }
+
+    function downloadCat() {
+        if(!currentUrl) return;
+        const link = document.createElement('a');
+        link.href = currentUrl;
+        link.download = 'MyCuteCat.jpg';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function saveFavorite() {
+        let favs = JSON.parse(localStorage.getItem('my_cats_ultra') || '[]');
+        if (favs.includes(currentUrl)) return;
+        favs.unshift(currentUrl);
+        localStorage.setItem('my_cats_ultra', JSON.stringify(favs.slice(0, 15)));
+        renderFavs();
+    }
+
+    function renderFavs() {
+        const list = document.getElementById('favList');
+        const favs = JSON.parse(localStorage.getItem('my_cats_ultra') || '[]');
+        list.innerHTML = favs.map(url => `<img src="${url}" class="fav-thumb" onclick="window.open('${url}')">`).join('') || '暂无收藏';
+    }
+
+    function shareCat() {
+        if (navigator.share) {
+            navigator.share({ title: '看这张可爱的猫！', url: currentUrl });
+        } else {
+            alert("图片链接已复制: " + currentUrl);
         }
-    </script>
+    }
 
+    function clearFavs() {
+        localStorage.removeItem('my_cats_ultra');
+        renderFavs();
+    }
+
+    fetchCat();
+    renderFavs();
+</script>
 </body>
 </html>
